@@ -90,4 +90,4 @@ def redirect_to_original(short_url):
 
 with app.app_context():
     db.create_all()
-    app.run(debug=True)
+    app.run()
