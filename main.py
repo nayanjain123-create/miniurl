@@ -40,7 +40,6 @@ class URL(db.Model):
         nullable=True
     )
 
-@app.route('/shorten', methods=['POST'])
 def generate_shorten_url(length=6):
     chars = string.ascii_letters + string.digits
     short_url = ''.join(random.choice(chars) for _ in range(length))    
@@ -68,9 +67,16 @@ def home():
     return render_template('index.html')
 
 def generate_qrcode(short_url):
+
     img = qrcode.make(short_url)
-    img.save('static/qrcode.png')
-    return 'static/qrcode.png'
+
+    short_code = short_url.split("/")[-1]
+
+    filename = f"static/{short_code}.png"
+
+    img.save(filename)
+
+    return filename
 
 @app.route('/<short_url>')
 def redirect_to_original(short_url):
@@ -82,7 +88,6 @@ def redirect_to_original(short_url):
     else:
         return 'URL not found', 404
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
+with app.app_context():
+    db.create_all()
     app.run(debug=True)
